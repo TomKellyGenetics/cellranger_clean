@@ -53,7 +53,7 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/mckinsel/cellranger.git \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
  && cd cellranger \
  && make
 
@@ -87,7 +87,7 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && cd .. \
  && rm -rf STAR-2.5.1b
 
-# Install tsne python pacakge. pip installing it doesn't work
+# Install tsne python package. pip installing it doesn't work
 RUN git clone https://github.com/mckinsel/tsne.git \
  && cd tsne \
  && make install \

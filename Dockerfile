@@ -1,16 +1,27 @@
-FROM ubuntu:zesty
+FROM ubuntu:bionic
+#trusty
+#FROM debian:8
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Install dependencies for cellranger
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y \
+    apt-utils \
+    clang-6.0 \
     cython \
-    golang-1.8 \
+    dialog \
+#    golang-1.10-go \
+    gcc-multilib \
     libbz2-dev \
+    liblzma-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
     libgfortran-5-dev \
     libffi-dev \
     libhdf5-dev \
+    libhts-dev \
     libncurses-dev \
     libopenblas-dev \
     libpixman-1-dev \
@@ -18,12 +29,15 @@ RUN apt-get update \
     libsodium-dev \
     libssl-dev \
     libtiff5-dev \
+    libtiff-tools \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
+    llvm \
+    lzma-dev \
     python-cairo \
     python-h5py \
-    python-libtiff \
+#    python-libtiff \ 
     python-matplotlib \
     python-nacl \
     python-numpy \
@@ -38,7 +52,17 @@ RUN apt-get update \
     samtools \
     zlib1g-dev
 
-RUN ln -s /usr/lib/go-1.8/bin/go /usr/bin/go
+RUN pip install libtiff
+
+RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
+ && tar -xvf go1.11.linux-amd64.tar.gz \
+ && mv go /usr/local
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+RUN ln -s /usr/lib/go-1.11/bin/go /usr/bin/go
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -47,15 +71,28 @@ RUN pip install -r /opt/requirements.txt
 # cellranger.
 RUN apt-get install -y \
     curl \
-    git \
+    git  \
  && curl https://sh.rustup.rs -sSf | sh -s -- -y
 
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  -s -- -y
+
+#RUN apt-get install -y libstd-rust-1.34 cargo
 ENV PATH /root/.cargo/bin/:$PATH
+ENV PATH  $HOME/.cargo/bin:$PATH
+RUN bash $HOME/.cargo/env
+
+RUN rustup install 1.40.0
+RUN rustup default 1.40.0
+
+RUN cd home \
+ && mkdir -p root \
+ && cd root \
+ && mkdir -p local local/lib local/bin 
 
 # Build cellranger itself 
 RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
  && cd cellranger \
- && make
+ && make && make louvain-clean &&  make louvain
 
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \

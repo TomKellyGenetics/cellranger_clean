@@ -84,15 +84,13 @@ RUN bash $HOME/.cargo/env
 RUN rustup install 1.40.0
 RUN rustup default 1.40.0
 
-RUN cd home \
- && mkdir -p root \
- && cd root \
- && mkdir -p local local/lib local/bin 
-
 # Build cellranger itself 
 RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
  && cd cellranger \
  && make && make louvain-clean &&  make louvain
+
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
+ && apt-get install -y nodejs
 
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \

@@ -97,7 +97,7 @@ RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && cd martian \
- && make mrc mrf mrg mrp mrs mrt_helper mrstat mrjob
+ && make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
 ENV PATH /cellranger/bin/:/cellranger/lib/bin:/cellranger/tenkit/bin/:/cellranger/tenkit/lib/bin:/martian/bin/:$PATH

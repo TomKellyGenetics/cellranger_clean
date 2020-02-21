@@ -50,6 +50,8 @@ RUN apt-get update \
     python-tables \
     python-tk \
     samtools \
+    tar \
+    wget \
     zlib1g-dev
 
 RUN pip install libtiff

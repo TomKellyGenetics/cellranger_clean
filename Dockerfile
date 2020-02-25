@@ -69,6 +69,10 @@ RUN ln -s /usr/lib/go-1.11/bin/go /usr/bin/go
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
 
+# RUN easy_install -U pip
+# RUN easy_install -U pyOpenSSL
+# RUN apt-get install python-dateutil
+
 # Install rust and cargo. Note that installing with apt gets a rust that won't complie
 # cellranger.
 RUN apt-get install -y \
@@ -78,7 +82,7 @@ RUN apt-get install -y \
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  -s -- -y
 
-#RUN apt-get install -y libstd-rust-1.34 cargo
+#RUN apt-get install -y libstd-rust-1.40 cargo
 ENV PATH /root/.cargo/bin/:$PATH
 ENV PATH  $HOME/.cargo/bin:$PATH
 RUN bash $HOME/.cargo/env
@@ -86,10 +90,19 @@ RUN bash $HOME/.cargo/env
 RUN rustup install 1.40.0
 RUN rustup default 1.40.0
 
+RUN mkdir -p cellranger-3.0.2.9001 \
+   && cd cellranger-3.0.2.9001 \
+   && mkdir -p cellranger-cs \
+   && mkdir -p cellranger-cs/3.0.2.9001
+
 # Build cellranger itself 
-RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
- && cd cellranger \
- && make && make louvain-clean &&  make louvain
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-cs/3.0.2.9001  \
+ && cd cellranger-cs/3.0.2.9001 \
+ && make && make louvain-clean &&  make louvain \
+ && cd ../..
+
+RUN ln -s cellranger-cs/3.0.2/bin/cellranger . \
+&& cd /
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
  && apt-get install -y nodejs
@@ -100,7 +113,7 @@ RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
-ENV PATH /cellranger/bin/:/cellranger/lib/bin:/cellranger/tenkit/bin/:/cellranger/tenkit/lib/bin:/martian/bin/:$PATH
+ENV PATH /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/bin/:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/bin/:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/lib/bin:/martian/bin/:$PATH
 ENV PYTHONPATH /cellranger/lib/python:/cellranger/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
 ENV MROPATH /cellranger/mro/:/cellranger/tenkit/mro/
 ENV _TENX_LD_LIBRARY_PATH whatever

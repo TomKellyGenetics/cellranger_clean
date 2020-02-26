@@ -66,7 +66,17 @@ ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 RUN ln -s /usr/lib/go-1.11/bin/go /usr/bin/go
 
+RUN  apt-get remove -y python-openssl \
+&&  apt-get install -y --reinstall python-openssl
+
+RUN wget https://files.pythonhosted.org/packages/40/d0/8efd61531f338a89b4efa48fcf1972d870d2b67a7aea9dcf70783c8464dc/pyOpenSSL-19.0.0.tar.gz \
+ && tar -xzvf pyOpenSSL-19.0.0.tar.gz \
+ && cd pyOpenSSL-19.0.0 \ 
+ python setup.py install \
+ && cd ..
+
 COPY requirements.txt /opt/requirements.txt
+RUN pip install --upgrade pip
 RUN pip install -r /opt/requirements.txt
 
 # RUN easy_install -U pip
@@ -91,13 +101,14 @@ RUN rustup install 1.40.0
 RUN rustup default 1.40.0
 
 RUN mkdir -p cellranger-3.0.2.9001 \
-   && cd cellranger-3.0.2.9001 \
-   && mkdir -p cellranger-cs \
-   && mkdir -p cellranger-cs/3.0.2.9001
+  && cd cellranger-3.0.2.9001 \
+  && mkdir -p cellranger-cs \
+  && mkdir -p cellranger-cs/3.0.2.9001 \
+  cd /
 
 # Build cellranger itself 
-RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-cs/3.0.2.9001  \
- && cd cellranger-cs/3.0.2.9001 \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001  \
+ && cd cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001 \
  && make && make louvain-clean &&  make louvain \
  && cd ../..
 
@@ -114,8 +125,8 @@ RUN git clone --recursive https://github.com/martian-lang/martian.git \
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
 ENV PATH /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/bin/:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/bin/:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/lib/bin:/martian/bin/:$PATH
-ENV PYTHONPATH /cellranger/lib/python:/cellranger/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
-ENV MROPATH /cellranger/mro/:/cellranger/tenkit/mro/
+ENV PYTHONPATH /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/python:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
+ENV MROPATH /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/mro/:/cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/tenkit/mro/
 ENV _TENX_LD_LIBRARY_PATH whatever
 
 # Install bcl2fastq. mkfastq requires it.

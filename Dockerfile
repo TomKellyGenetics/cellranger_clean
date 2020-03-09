@@ -14,6 +14,7 @@ RUN apt-get update \
     dialog \
 #    golang-1.10-go \
     gcc-multilib \
+    gzip \
     libbz2-dev \
     liblzma-dev \
     libcairo2-dev \
@@ -22,6 +23,8 @@ RUN apt-get update \
     libffi-dev \
     libhdf5-dev \
     libhts-dev \
+    liblz4-dev \
+    liblz4-tool \
     libncurses-dev \
     libopenblas-dev \
     libpixman-1-dev \
@@ -43,6 +46,7 @@ RUN apt-get update \
     python-numpy \
     python-pip \
     python-libxml2 \
+    python-lz4 \
     python-redis \
     python-ruamel.yaml \
     python-sip \
@@ -53,6 +57,8 @@ RUN apt-get update \
     tar \
     wget \
     zlib1g-dev
+
+RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
@@ -104,7 +110,7 @@ RUN mkdir -p cellranger-3.0.2.9001 \
   && cd cellranger-3.0.2.9001 \
   && mkdir -p cellranger-cs \
   && mkdir -p cellranger-cs/3.0.2.9001 \
-  cd /
+  && cd /
 
 # Build cellranger itself 
 RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001  \
@@ -112,8 +118,10 @@ RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-3.0.
  && make && make louvain-clean &&  make louvain \
  && cd ../..
 
-RUN ln -s cellranger-cs/3.0.2/bin/cellranger . \
-&& cd /
+RUN ln -s /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/bin/cellranger /cellranger-3.0.2.9001/cellranger \
+ && cd /
+
+RUN gunzip -k /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/python/cellranger/barcodes/3M-february-2018.txt.gz 
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
  && apt-get install -y nodejs

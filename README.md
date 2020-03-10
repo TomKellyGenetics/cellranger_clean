@@ -1,3 +1,12 @@
+![Docker Automated build](https://img.shields.io/docker/automated/tomkellygenetics/cellranger_clean)
+![Docker Build Status](https://img.shields.io/docker/build/tomkellygenetics/cellranger_clean)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/tomkellygenetics/cellranger_clean/latest)
+
+![Docker Stars](https://img.shields.io/docker/stars/tomkellygenetics/cellranger_clean)
+![Docker Pulls](https://img.shields.io/docker/pulls/tomkellygenetics/cellranger_clean)
+
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/tomkellygenetics/cellranger_clean)
+
 # cellranger_clean
 10x distributes a tarball of code and dependencies for their Cell Ranger software suite. That
 tarball has a [non-free license](https://support.10xgenomics.com/docs/license). But 10x also

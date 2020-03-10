@@ -4,7 +4,6 @@
 
 ![Docker Stars](https://img.shields.io/docker/stars/tomkellygenetics/cellranger_clean)
 ![Docker Pulls](https://img.shields.io/docker/pulls/tomkellygenetics/cellranger_clean)
-
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/tomkellygenetics/cellranger_clean)
 
 # cellranger_clean

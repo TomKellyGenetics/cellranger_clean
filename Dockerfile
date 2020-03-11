@@ -164,5 +164,6 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
 RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && cd tsne \
  && make install \
+ && python setup.py install \
  && cd .. \
  && rm -rf tsne

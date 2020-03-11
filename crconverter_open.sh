@@ -61,10 +61,22 @@ supported software be used for other purposes.
 
 The code in this repository is licensed under the MIT License.
 '
-
 ##########
 
-#variable optionsname=false
+
+
+
+#####print usage#####
+if [[ -z $1 ]]; then
+    echo "$statement"
+    exit 1
+fi
+##########
+
+
+
+
+#####declare variables#####
 name=$1
 type=$2
 inpath=""
@@ -72,6 +84,7 @@ output=""
 pipestance=""
 metrics=""
 analysis=""
+matrix=""
 aggregation=""
 gemgroups=""
 contiginfo=""
@@ -84,7 +97,19 @@ description=""
 next=false
 end=false
 
-for op in "${@:3}"; do
+if [[ $1 == "-h" ]] || [[ $2 == "-h" ]] || [[ $1 == "--help" ]] || [[ $2 == "--help" ]]; then
+    end=true
+    usage=true
+    help=true
+fi
+
+if [[ $1 == "-v" ]] || [[ $2 == "-v" ]] || [[ $1 == "--version" ]] || [[ $2 == "--version" ]]; then
+    end=true
+    version=true
+fi
+shift
+shift
+for op in "${@}"; do
     if $next; then
         next=false;
         continue;
@@ -98,6 +123,7 @@ for op in "${@:3}"; do
                 shift
             else
                 echo "Explicit setting of input using other flags will override inputs found with --inpath"
+                shift
             fi
             ;;
            --output)
@@ -138,6 +164,16 @@ for op in "${@:3}"; do
                 shift
             else
                 analysis=""
+            fi
+            ;;
+          --matrix)
+            shift
+            if [[ "$1" != "" ]]; then
+                matrix="${1/%\//}"
+                next=true
+                shift
+            else
+                matrix=""
             fi
             ;;
            --aggregation)
@@ -242,32 +278,31 @@ for op in "${@:3}"; do
             shift
             ;;
         -*)
-            echo "$statement"
+            echo "Error: Invalid option: $op"
             exit 1
             ;;
     esac
 done
 ##########
 
-if [[ -z $1 ]]; then
-    echo "$statement"
-    exit 1
+if [[ $end  ]]; then
+    if [[ ! -z $help ]]; then
+        echo "$statement"
+        echo "$options"
+        exit 0
+    fi
 fi
 
-if [[ -z $help ]]; then
-    echo "$statement"
-    echo "$options"
-    exit 0
-fi
-
-if [[ -z $version ]]; then
-    echo "$crconverterversion"
-    exit 0
+if [[ $end ]]; then
+    if [[ ! -z $version ]]; then
+        echo "$crconverterversion"
+        exit 0
+    fi
 fi
 
 ##########
 
-if [[ ! -z $output ]]; then
+if [[ -z $output ]]; then
     echo "An output file must be specified"
     exit 1
 fi

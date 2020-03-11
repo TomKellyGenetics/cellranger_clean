@@ -121,6 +121,10 @@ RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-3.0.
 RUN ln -s /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/bin/cellranger /cellranger-3.0.2.9001/cellranger \
  && cd /
 
+COPY crconverter_open.sh /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin/crconverter
+
+COPY crconverter_open.sh /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin/vlconverter
+
 RUN gunzip -k /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/python/cellranger/barcodes/3M-february-2018.txt.gz 
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \

@@ -157,8 +157,9 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && rm -rf STAR-2.5.1b
 
 # Install tsne python package. pip installing it doesn't work
-RUN git clone https://github.com/mckinsel/tsne.git \
+RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && cd tsne \
  && make install \
+ && python setup.py install \
  && cd .. \
  && rm -rf tsne

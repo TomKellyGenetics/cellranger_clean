@@ -1,4 +1,4 @@
-![Docker Automated build](https://img.shields.io/docker/automated/tomkellygenetics/cellranger_clean)
+![Docker Status](https://img.shields.io/docker/status/tomkellygenetics/cellranger_clean)
 ![Docker Build Status](https://img.shields.io/docker/build/tomkellygenetics/cellranger_clean)
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/tomkellygenetics/cellranger_clean/latest)
 

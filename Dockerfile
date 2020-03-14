@@ -24,6 +24,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
+    llvm \
     python-cairo \
     python-h5py \
 #    python-libtiff \
@@ -60,12 +61,10 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/10XGenomics/cellranger.git \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
  && cd cellranger \
- && git checkout 2.1.0 \
- && echo "2.1.0" > .version \
- && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
- && git pull -r mckinsel master \
+ && git checkout v2.1.1 \
+ && echo "2.1.1.9001" > .version \
  && make
 
 # Install Martian. Note that we're just building the executables, not the web stuff

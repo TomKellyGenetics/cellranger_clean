@@ -62,8 +62,8 @@ ENV PATH /root/.cargo/bin/:$PATH
 # Build cellranger itself 
 RUN git clone https://github.com/10XGenomics/cellranger.git \
  && cd cellranger \
- && git checkout 2.0.2 \
- && echo "2.0.2" > .version \
+ && git checkout 2.1.0 \
+ && echo "2.1.0" > .version \
  && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
  && git pull -r mckinsel master \
  && make

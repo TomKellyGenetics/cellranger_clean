@@ -1,7 +1,10 @@
-FROM ubuntu:zesty
+FROM ubuntu:bionic
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Install dependencies for cellranger
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y \
     cython \
     golang-1.8 \
@@ -23,7 +26,7 @@ RUN apt-get update \
     libzmq3-dev \
     python-cairo \
     python-h5py \
-    python-libtiff \
+#    python-libtiff \
     python-matplotlib \
     python-nacl \
     python-numpy \
@@ -37,6 +40,10 @@ RUN apt-get update \
     python-tk \
     samtools \
     zlib1g-dev
+
+RUN pip install Cython==0.28.0
+
+RUN pip install libtiff
 
 RUN ln -s /usr/lib/go-1.8/bin/go /usr/bin/go
 
@@ -53,8 +60,12 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/mckinsel/cellranger.git \
+RUN git clone https://github.com/10XGenomics/cellranger.git \
  && cd cellranger \
+ && git checkout 2.0.2 \
+ && echo "2.0.2" > .version \
+ && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
+ && git pull -r mckinsel master \
  && make
 
 # Install Martian. Note that we're just building the executables, not the web stuff

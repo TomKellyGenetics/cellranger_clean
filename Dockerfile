@@ -7,7 +7,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
     cython \
-    golang-1.8 \
+    golang-1.10 \
     libbz2-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
@@ -45,7 +45,7 @@ RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
-RUN ln -s /usr/lib/go-1.8/bin/go /usr/bin/go
+RUN ln -s /usr/lib/go-1.10/bin/go /usr/bin/go
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -60,9 +60,9 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/10XGenomics/cellranger.git cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001 \
- && cd cellranger \
- && git checkout 2.0.2 \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001 \
+ && cd cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001 \
+ && git checkout v2.0.2 \
  && echo "2.0.2.9001" > .version \
  && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
  && git config user.email "docker@.docker.com" \

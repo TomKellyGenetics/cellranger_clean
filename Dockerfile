@@ -60,23 +60,32 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/10XGenomics/cellranger.git \
+RUN git clone https://github.com/10XGenomics/cellranger.git cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001 \
  && cd cellranger \
  && git checkout 2.0.2 \
- && echo "2.0.2" > .version \
+ && echo "2.0.2.9001" > .version \
  && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
+ && git config user.email "docker@.docker.com" \
+ && git config user.name "docker" \
  && git pull -r mckinsel master \
  && make
+
+RUN ln -s /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/bin/cellranger /cellranger-2.0.2.9001/cellranger \
+ && cd /
+
+COPY crconverter_open.sh /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/lib/bin/crconverter
+
+COPY crconverter_open.sh /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/lib/bin/vlconverter
 
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && cd martian \
- && make mrc mrf mrg mrp mrs mrt_helper mrstat mrjob
+&& make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
-ENV PATH /cellranger/bin/:/cellranger/lib/bin:/cellranger/tenkit/bin/:/cellranger/tenkit/lib/bin:/martian/bin/:$PATH
-ENV PYTHONPATH /cellranger/lib/python:/cellranger/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
-ENV MROPATH /cellranger/mro/:/cellranger/tenkit/mro/
+ENV PATH /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/bin/:/cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/lib/bin:/cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/tenkit/bin/:/cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/tenkit/lib/bin:/martian/bin/:$PATH
+ENV PYTHONPATH /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/lib/python:/cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
+ENV MROPATH /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/mro/:/cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/tenkit/mro/
 ENV _TENX_LD_LIBRARY_PATH whatever
 
 # Install bcl2fastq. mkfastq requires it.
@@ -104,3 +113,5 @@ RUN git clone https://github.com/mckinsel/tsne.git \
  && make install \
  && cd .. \
  && rm -rf tsne
+
+ENV PATH /cellranger-2.0.2.9001:$PATH

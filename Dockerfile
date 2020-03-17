@@ -7,7 +7,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
     cython \
-    golang-1.10 \
+#    golang-1.10 \
     libbz2-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
@@ -44,6 +44,14 @@ RUN apt-get update \
 RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
+
+RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
+ && tar -xvf go1.11.linux-amd64.tar.gz \
+ && mv go /usr/local
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 RUN ln -s /usr/lib/go-1.10/bin/go /usr/bin/go
 

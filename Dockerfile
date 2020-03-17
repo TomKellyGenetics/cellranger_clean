@@ -7,7 +7,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
     cython \
-    golang-1.8 \
+#    golang-1.10 \
     libbz2-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
@@ -39,13 +39,23 @@ RUN apt-get update \
     python-tables \
     python-tk \
     samtools \
+    tar \
+    wget \
     zlib1g-dev
 
 RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
-RUN ln -s /usr/lib/go-1.8/bin/go /usr/bin/go
+RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
+ && tar -xvf go1.11.linux-amd64.tar.gz \
+ && mv go /usr/local
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+RUN ln -s /usr/lib/go-1.10/bin/go /usr/bin/go
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -60,23 +70,28 @@ RUN apt-get install -y \
 ENV PATH /root/.cargo/bin/:$PATH
 
 # Build cellranger itself 
-RUN git clone https://github.com/10XGenomics/cellranger.git \
- && cd cellranger \
- && git checkout 2.1.0 \
- && echo "2.1.0" > .version \
- && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
- && git pull -r mckinsel master \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001 \
+ && cd cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001 \
+ && git checkout v2.1.0 \
+ && echo "2.1.0.9001" > .version \
  && make
+
+RUN ln -s /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/bin/cellranger /cellranger-2.1.0.9001/cellranger \
+ && cd /
+
+COPY crconverter_open.sh /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin/crconverter
+
+COPY crconverter_open.sh /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin/vlconverter
 
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && cd martian \
- && make mrc mrf mrg mrp mrs mrt_helper mrstat mrjob
+&& make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
-ENV PATH /cellranger/bin/:/cellranger/lib/bin:/cellranger/tenkit/bin/:/cellranger/tenkit/lib/bin:/martian/bin/:$PATH
-ENV PYTHONPATH /cellranger/lib/python:/cellranger/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
-ENV MROPATH /cellranger/mro/:/cellranger/tenkit/mro/
+ENV PATH /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/bin/:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/bin/:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/lib/bin:/martian/bin/:$PATH
+ENV PYTHONPATH /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/python:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
+ENV MROPATH /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/mro/:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/mro/
 ENV _TENX_LD_LIBRARY_PATH whatever
 
 # Install bcl2fastq. mkfastq requires it.
@@ -99,8 +114,10 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && rm -rf STAR-2.5.1b
 
 # Install tsne python pacakge. pip installing it doesn't work
-RUN git clone https://github.com/mckinsel/tsne.git \
+RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && cd tsne \
  && make install \
  && cd .. \
  && rm -rf tsne
+
+ENV PATH /cellranger-2.1.0.9001:$PATH

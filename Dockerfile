@@ -74,10 +74,6 @@ RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-2.0.
  && cd cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001 \
  && git checkout v2.0.2 \
  && echo "2.0.2.9001" > .version \
- && git remote add mckinsel https://github.com/mckinsel/cellranger.git \
- && git config user.email "docker@.docker.com" \
- && git config user.name "docker" \
- && git pull -r mckinsel master \
  && make
 
 RUN ln -s /cellranger-2.0.2.9001/cellranger-cs/2.0.2.9001/bin/cellranger /cellranger-2.0.2.9001/cellranger \
@@ -118,7 +114,7 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && rm -rf STAR-2.5.1b
 
 # Install tsne python pacakge. pip installing it doesn't work
-RUN git clone https://github.com/mckinsel/tsne.git \
+RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && cd tsne \
  && make install \
  && cd .. \

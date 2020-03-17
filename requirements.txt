@@ -51,9 +51,9 @@ pycurl==7.19.5.1
 pyfasta
 pyopenssl==0.14
 pyparsing==2.0.3
-pysam
+pysam==0.12.0.1
 pytest==2.6.4
-python_dateutil==2.4.1
+python_dateutil==2.5.0
 pytz==2015.2
 PyVCF
 pyyaml==3.11

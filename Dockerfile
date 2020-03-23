@@ -25,6 +25,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
+    llvm \
     python-cairo \
     python-h5py \
 #    python-libtiff \

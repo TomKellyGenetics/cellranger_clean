@@ -7,6 +7,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
     cython \
+    clang-6.0 \
 #    golang-1.10 \
     libbz2-dev \
     libcairo2-dev \

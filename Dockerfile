@@ -47,15 +47,15 @@ RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
-RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
- && tar -xvf go1.11.linux-amd64.tar.gz \
+RUN wget https://dl.google.com/go/go1.9.linux-amd64.tar.gz \
+ && tar -xvf go1.9.linux-amd64.tar.gz \
  && mv go /usr/local
 
 ENV GOROOT=/usr/local/go
 ENV GOPATH=$HOME/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-RUN ln -s /usr/lib/go-1.10/bin/go /usr/bin/go
+RUN ln -s /usr/lib/go-1.9/bin/go /usr/bin/go
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -68,6 +68,11 @@ RUN apt-get install -y \
  && curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 ENV PATH /root/.cargo/bin/:$PATH
+ENV PATH  $HOME/.cargo/bin:$PATH
+RUN bash $HOME/.cargo/env
+
+RUN rustup install 1.40.0
+RUN rustup default 1.40.0
 
 # Build cellranger itself 
 RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001 \
@@ -121,3 +126,4 @@ RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && rm -rf tsne
 
 ENV PATH /cellranger-2.1.0.9001:$PATH
+

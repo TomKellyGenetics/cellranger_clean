@@ -22,6 +22,7 @@ RUN apt-get update \
     libsodium-dev \
     libssl-dev \
     libtiff5-dev \
+    libhts-dev \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
@@ -33,6 +34,7 @@ RUN apt-get update \
     python-nacl \
     python-numpy \
     python-pip \
+    python-lz4 \
     python-libxml2 \
     python-redis \
     python-ruamel.yaml \

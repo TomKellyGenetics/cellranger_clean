@@ -47,6 +47,8 @@ RUN apt-get update \
     wget \
     zlib1g-dev
 
+RUN ln -s /usr/bin/clang-6.0 /usr/bin/clang
+
 RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
@@ -60,6 +62,16 @@ ENV GOPATH=$HOME/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 RUN ln -s /usr/lib/go-1.9/bin/go /usr/bin/go
+
+RUN  apt-get remove -y python-openssl \
+&&  apt-get install -y --reinstall python-openssl
+
+RUN wget https://files.pythonhosted.org/packages/40/d0/8efd61531f338a89b4efa48fcf1972d870d2b67a7aea9dcf70783c8464dc/pyOpenSSL-19.0.0.tar.gz \
+&& tar -xzvf pyOpenSSL-19.0.0.tar.gz \
+&& cd pyOpenSSL-19.0.0 \ 
+&& python setup.py install \
+&& cd ..
+
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -92,10 +104,13 @@ COPY crconverter_open.sh /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin
 
 COPY crconverter_open.sh /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin/vlconverter
 
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
+ && apt-get install -y nodejs
+
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && cd martian \
-&& make mrc mrf mrg mrp mrs mrstat mrjob
+ && make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
 ENV PATH /cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/bin/:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/lib/bin:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/bin/:/cellranger-2.1.0.9001/cellranger-cs/2.1.0.9001/tenkit/lib/bin:/martian/bin/:$PATH

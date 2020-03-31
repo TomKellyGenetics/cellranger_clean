@@ -47,6 +47,8 @@ RUN apt-get update \
     wget \
     zlib1g-dev
 
+RUN ln -s /usr/bin/clang-6.0 /usr/bin/clang
+
 RUN pip install Cython==0.28.0
 
 RUN pip install libtiff

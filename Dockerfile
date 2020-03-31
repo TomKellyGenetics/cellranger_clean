@@ -53,15 +53,15 @@ RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
-RUN wget https://dl.google.com/go/go1.9.linux-amd64.tar.gz \
- && tar -xvf go1.9.linux-amd64.tar.gz \
+RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
+ && tar -xvf go1.11.linux-amd64.tar.gz \
  && mv go /usr/local
 
 ENV GOROOT=/usr/local/go
 ENV GOPATH=$HOME/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-RUN ln -s /usr/lib/go-1.9/bin/go /usr/bin/go
+RUN ln -s /usr/lib/go-1.11/bin/go /usr/bin/go
 
 RUN  apt-get remove -y python-openssl \
 &&  apt-get install -y --reinstall python-openssl

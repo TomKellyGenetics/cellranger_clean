@@ -27,6 +27,7 @@ jdcal
 jedi==0.8.1
 jinja2==2.7.3
 jsonschema==2.4.0
+lz4==2.2.1
 markupsafe==0.23
 mistune==0.5.1
 mock==1.0.1
@@ -34,8 +35,10 @@ multipledispatch==0.4.7
 networkx==1.9.1
 numba==0.17.0
 numexpr==2.6.2
+numpy==1.16.6
 odo==0.3.1
 openpyxl==1.8.5
+pandas==0.22.0
 patsy==0.3.0
 pep8==1.6.2
 pillow==2.7.0

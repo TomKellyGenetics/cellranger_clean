@@ -6,6 +6,9 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
+    clang-6.0 \
+    cython \
+    gcc-multilib \
     cython \
     golang-1.8 \
     libbz2-dev \

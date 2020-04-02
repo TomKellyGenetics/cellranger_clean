@@ -6,18 +6,22 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
+    apt-utils \
     clang-6.0 \
     cython \
+    dialog \
     gcc-multilib \
-    cython \
-    clang-6.0 \
-#    golang-1.10 \
+    gzip \
     libbz2-dev \
+    liblzma-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
     libgfortran-5-dev \
     libffi-dev \
     libhdf5-dev \
+    libhts-dev \
+    liblz4-dev \
+    liblz4-tool \
     libncurses-dev \
     libopenblas-dev \
     libpixman-1-dev \
@@ -25,14 +29,14 @@ RUN apt-get update \
     libsodium-dev \
     libssl-dev \
     libtiff5-dev \
-    libhts-dev \
+    libtiff-tools \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
+    lzma-dev  \
     llvm \
     python-cairo \
     python-h5py \
-#    python-libtiff \
     python-matplotlib \
     python-nacl \
     python-numpy \

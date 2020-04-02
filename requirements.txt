@@ -21,11 +21,12 @@ funcsigs==0.4
 futures==2.2.0
 greenlet==0.4.5
 grin==1.2.1
+h5py==2.6.0
 illuminate
 itsdangerous==0.24
 jdcal
 jedi==0.8.1
-jinja2==2.7.3
+jinja2==2.10.1
 jsonschema==2.4.0
 lz4==2.2.1
 markupsafe==0.23
@@ -54,9 +55,9 @@ pycurl==7.19.5.1
 pyfasta
 pyopenssl==0.14
 pyparsing==2.0.3
-pysam
+pysam==0.12.0.1
 pytest==2.6.4
-python_dateutil==2.4.1
+python-dateutil==2.5.0
 pytz==2015.2
 PyVCF
 pyyaml==3.11
@@ -65,7 +66,7 @@ readline==6.2
 requests==2.11.1
 rope==0.9.4
 runipy==0.1.3
-scikit-learn==0.17.1
+scikit-learn==0.19.1
 scipy==0.18.1
 setuptools==27.2.0
 six==1.9.0

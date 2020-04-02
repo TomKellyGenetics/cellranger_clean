@@ -121,10 +121,6 @@ RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-3.0.
 RUN ln -s /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/bin/cellranger /cellranger-3.0.2.9001/cellranger \
  && cd /
 
-COPY crconverter_open.sh /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin/crconverter
-
-COPY crconverter_open.sh /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/bin/vlconverter
-
 RUN gunzip -k /cellranger-3.0.2.9001/cellranger-cs/3.0.2.9001/lib/python/cellranger/barcodes/3M-february-2018.txt.gz 
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
@@ -161,11 +157,8 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && rm -rf STAR-2.5.1b
 
 # Install tsne python package. pip installing it doesn't work
-RUN git clone https://github.com/TomKellyGenetics/tsne.git \
+RUN git clone https://github.com/mckinsel/tsne.git \
  && cd tsne \
  && make install \
- && python setup.py install \
  && cd .. \
  && rm -rf tsne
-
-ENV PATH /cellranger-3.0.2.9001:$PATH

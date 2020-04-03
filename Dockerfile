@@ -6,14 +6,22 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
+    apt-utils \
+    clang-6.0 \
     cython \
-    golang-1.8 \
+    dialog \
+    gcc-multilib \
+    gzip \
     libbz2-dev \
+    liblzma-dev \
     libcairo2-dev \
     libcurl4-openssl-dev \
     libgfortran-5-dev \
     libffi-dev \
     libhdf5-dev \
+    libhts-dev \
+    liblz4-dev \
+    liblz4-tool \
     libncurses-dev \
     libopenblas-dev \
     libpixman-1-dev \
@@ -21,17 +29,19 @@ RUN apt-get update \
     libsodium-dev \
     libssl-dev \
     libtiff5-dev \
+    libtiff-tools \
     libxml2-dev \
     libxslt1-dev \
     libzmq3-dev \
+    lzma-dev  \
     llvm \
     python-cairo \
     python-h5py \
-#    python-libtiff \
     python-matplotlib \
     python-nacl \
     python-numpy \
     python-pip \
+    python-lz4 \
     python-libxml2 \
     python-redis \
     python-ruamel.yaml \
@@ -40,13 +50,35 @@ RUN apt-get update \
     python-tables \
     python-tk \
     samtools \
+    tar \
+    wget \
     zlib1g-dev
+
+RUN ln -s /usr/bin/clang-6.0 /usr/bin/clang
 
 RUN pip install Cython==0.28.0
 
 RUN pip install libtiff
 
-RUN ln -s /usr/lib/go-1.8/bin/go /usr/bin/go
+RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \
+ && tar -xvf go1.11.linux-amd64.tar.gz \
+ && mv go /usr/local
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+RUN ln -s /usr/lib/go-1.11/bin/go /usr/bin/go
+
+RUN  apt-get remove -y python-openssl \
+&&  apt-get install -y --reinstall python-openssl
+
+RUN wget https://files.pythonhosted.org/packages/40/d0/8efd61531f338a89b4efa48fcf1972d870d2b67a7aea9dcf70783c8464dc/pyOpenSSL-19.0.0.tar.gz \
+&& tar -xzvf pyOpenSSL-19.0.0.tar.gz \
+&& cd pyOpenSSL-19.0.0 \ 
+&& python setup.py install \
+&& cd ..
+
 
 COPY requirements.txt /opt/requirements.txt
 RUN pip install -r /opt/requirements.txt
@@ -59,23 +91,38 @@ RUN apt-get install -y \
  && curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 ENV PATH /root/.cargo/bin/:$PATH
+ENV PATH  $HOME/.cargo/bin:$PATH
+RUN bash $HOME/.cargo/env
+
+RUN rustup install 1.40.0
+RUN rustup default 1.40.0
 
 # Build cellranger itself 
-RUN git clone https://github.com/TomKellyGenetics/cellranger.git \
- && cd cellranger \
+RUN git clone https://github.com/TomKellyGenetics/cellranger.git cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001 \
+ && cd cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001 \
  && git checkout v2.1.1 \
  && echo "2.1.1.9001" > .version \
  && make
 
+RUN ln -s /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/bin/cellranger /cellranger-2.1.1.9001/cellranger \
+ && cd /
+
+COPY crconverter_open.sh /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/lib/bin/crconverter
+
+COPY crconverter_open.sh /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/lib/bin/vlconverter
+
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
+ && apt-get install -y nodejs
+
 # Install Martian. Note that we're just building the executables, not the web stuff
 RUN git clone --recursive https://github.com/martian-lang/martian.git \
  && cd martian \
- && make mrc mrf mrg mrp mrs mrt_helper mrstat mrjob
+ && make mrc mrf mrg mrp mrs mrstat mrjob
 
 # Set up paths to cellranger. This is most of what sourceme.bash would do.
-ENV PATH /cellranger/bin/:/cellranger/lib/bin:/cellranger/tenkit/bin/:/cellranger/tenkit/lib/bin:/martian/bin/:$PATH
-ENV PYTHONPATH /cellranger/lib/python:/cellranger/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
-ENV MROPATH /cellranger/mro/:/cellranger/tenkit/mro/
+ENV PATH /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/bin/:/cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/lib/bin:/cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/tenkit/bin/:/cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/tenkit/lib/bin:/martian/bin/:$PATH
+ENV PYTHONPATH /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/lib/python:/cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/tenkit/lib/python:/martian/adapters/python:$PYTHONPATH
+ENV MROPATH /cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/mro/:/cellranger-2.1.1.9001/cellranger-cs/2.1.1.9001/tenkit/mro/
 ENV _TENX_LD_LIBRARY_PATH whatever
 
 # Install bcl2fastq. mkfastq requires it.
@@ -98,8 +145,11 @@ RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && rm -rf STAR-2.5.1b
 
 # Install tsne python pacakge. pip installing it doesn't work
-RUN git clone https://github.com/mckinsel/tsne.git \
+RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && cd tsne \
  && make install \
  && cd .. \
  && rm -rf tsne
+
+ENV PATH /cellranger-2.1.1.9001:$PATH
+

@@ -57,7 +57,7 @@ RUN apt-get update \
 RUN ln -s /usr/bin/clang-6.0 /usr/bin/clang
 
 RUN pip install Cython==0.28.0
-
+RUN pip install --upgrade pip
 RUN pip install libtiff
 
 RUN wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz \

@@ -36,7 +36,7 @@ multipledispatch==0.4.7
 networkx==1.9.1
 numba==0.17.0
 numexpr==2.6.2
-numpy==1.13.3
+numpy
 odo==0.3.1
 openpyxl==1.8.5
 pandas==0.22.0
@@ -55,7 +55,7 @@ pycurl==7.19.5.1
 pyfasta
 pyopenssl==0.14
 pyparsing==2.0.3
-pysam==0.12.0.1
+pysam
 pytest==2.6.4
 python-dateutil==2.5.0
 pytz==2015.2

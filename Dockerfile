@@ -169,3 +169,5 @@ RUN git clone https://github.com/TomKellyGenetics/tsne.git \
  && rm -rf tsne
 
 ENV PATH /cellranger-3.0.2.9001:$PATH
+
+COPY run_tests.sh /run_tests.sh

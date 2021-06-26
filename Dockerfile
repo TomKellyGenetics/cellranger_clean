@@ -154,9 +154,9 @@ RUN apt-get update \
 RUN wget https://github.com/alexdobin/STAR/archive/2.5.1b.tar.gz \
  && tar xf 2.5.1b.tar.gz \
  && rm 2.5.1b.tar.gz \
- && cd STAR-2.5.1b \
+ && cd STAR-2.5.1b/source \
  && make \
- && mv bin/Linux_x86_64_static/STAR* /usr/bin \
+ && mv ./STAR* /usr/bin \
  && cd .. \
  && rm -rf STAR-2.5.1b
 
